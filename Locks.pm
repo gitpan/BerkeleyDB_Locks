@@ -25,21 +25,20 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 bootstrap BerkeleyDB::Locks $VERSION;
 
 # Preloaded methods go here.
 
-## CPAN cops got all over this...
-# {
-#	package BerkeleyDB::Env ;
+{
+	package BerkeleyDB::Env ;
 
 	sub lockmonitor {
 		my $dbenv = shift ;
 		return BerkeleyDB::Locks->new( $dbenv ) ;
 		}
-#	}
+	}
 
 sub dbenv {
 	return 0 ;
@@ -106,7 +105,7 @@ BerkeleyDB::Locks - Perl extension for Berkeley DB 4.1
   use BerkeleyDB::Locks;
 
   $env = new BerkeleyDB::Env ... ;
-  $watch = new BerkeleyDB::Locks $env ; 
+  $watch = $env->lockmonitor ;
 
   while (1) {
 	my @released = $watch->monitor ;

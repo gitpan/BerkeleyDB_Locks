@@ -4,3 +4,7 @@ Revision history for Perl extension BerkeleyDB::Locks.
 	- original version; created by h2xs 1.21 with options
 		-A BerkeleyDB::Locks
 
+0.02  Thu Apr  3 17:48:49 2003
+	- _waiters searches list of held locks and derives waiters
+	  	instead of vice versa.
+	- test.pl is now reasonably functional 

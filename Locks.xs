@@ -119,7 +119,8 @@ AV* _waiters( SV *envAddr )
 
 	AV *av ;
 
-	struct __db_lock* lp, * wlp, * hlp ;
+	// struct __db_lock* lp, * wlp, * hlp ;
+	struct __db_lock* lp, * wlp ;
 
 	RETVAL = newAV() ;
 
@@ -151,43 +152,42 @@ AV* _waiters( SV *envAddr )
 		    			lp = SH_LIST_NEXT( lp,
 					locker_links, __db_lock ) ) {
 
-				if ( lp->status != DB_LSTAT_WAITING )
+				if ( lp->status != DB_LSTAT_HELD )
 					continue ;
+
 
 				lobj = (struct __db_lockobj*) ( (u_int8_t *) 
 						( (u_int8_t *) lp ) +lp->obj 
 						) ;
 
-				for ( hlp = SH_TAILQ_FIRST( 
-						  &lobj->holders, __db_lock ) ;
-						hlp ;
-						hlp = SH_TAILQ_NEXT( 
-						  hlp, links, __db_lock )
+				for ( wlp = SH_TAILQ_FIRST( 
+						  &lobj->waiters, __db_lock ) ;
+						wlp ;
+						wlp = SH_TAILQ_NEXT( 
+						  wlp, links, __db_lock )
 						) {
-
-	/*  Two locks identify a lock condition:
-	 *	The waiting lock
-	 *	The oldest lock holding the awaited object
-	 *
-	 *  Return each lock and associated gen to identify a unique
-	 *  locking condition
+	/*  Each waiter on a locked object represents a separate 
+	 *  lock condition:
 	 */
 					av = newAV() ;
+					// waiter
+					av_push( av, newSViv( R_OFFSET( 
+							&lt->reginfo, wlp ) 
+							) ) ;
+					av_push( av, newSViv( wlp->gen ) ) ;
+
+					// holder
 					av_push( av, newSViv( R_OFFSET( 
 							&lt->reginfo, lp ) 
 							) ) ;
 					av_push( av, newSViv( lp->gen ) ) ;
-					av_push( av, newSViv( R_OFFSET( 
-							&lt->reginfo, hlp ) 
-							) ) ;
-					av_push( av, newSViv( hlp->gen ) ) ;
 
 					av_push( RETVAL, newRV_inc( (SV *) av )
 							) ;
 					}
 				}
 			}
-	
+
 		UNLOCKREGION(dbenv->Env, lt);
 		}
 	
