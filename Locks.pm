@@ -31,14 +31,15 @@ bootstrap BerkeleyDB::Locks $VERSION;
 
 # Preloaded methods go here.
 
-{
-	package BerkeleyDB::Env ;
+## CPAN cops got all over this...
+# {
+#	package BerkeleyDB::Env ;
 
 	sub lockmonitor {
 		my $dbenv = shift ;
 		return BerkeleyDB::Locks->new( $dbenv ) ;
 		}
-	}
+#	}
 
 sub dbenv {
 	return 0 ;
@@ -105,7 +106,7 @@ BerkeleyDB::Locks - Perl extension for Berkeley DB 4.1
   use BerkeleyDB::Locks;
 
   $env = new BerkeleyDB::Env ... ;
-  $watch = $env->lockmonitor ;
+  $watch = new BerkeleyDB::Locks $env ; 
 
   while (1) {
 	my @released = $watch->monitor ;
