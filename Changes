@@ -1,0 +1,6 @@
+Revision history for Perl extension BerkeleyDB::Locks.
+
+0.01  Fri Feb 28 13:50:50 2003
+	- original version; created by h2xs 1.21 with options
+		-A BerkeleyDB::Locks
+
